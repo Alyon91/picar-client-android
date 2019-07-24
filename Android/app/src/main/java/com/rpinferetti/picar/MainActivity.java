@@ -20,6 +20,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -238,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
                 mSocket = new Socket(serverAddr, SERVER_PORT);
-                mBufferOut = new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream(), "UTF-8"));
+                mBufferOut = new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream(), StandardCharsets.UTF_8));
                 //mBufferIn = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
             } catch (IOException e) {
                 e.printStackTrace();
