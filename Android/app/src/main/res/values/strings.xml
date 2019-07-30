@@ -14,4 +14,9 @@
     <string name="rgb_red">RGB Red</string>
     <string name="rgb_green">RGB Green</string>
     <string name="rgb_blue">RGB Blue</string>
+
+    <string name="connect_title">PI CAR</string>
+    <string name="connect_ipaddr">IP Address</string>
+    <string name="connect_port">Port</string>
+    <string name="connect_connbtn">Connect</string>
 </resources>

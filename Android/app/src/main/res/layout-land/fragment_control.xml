@@ -2,9 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@android:color/background_light"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".ControlFragment">
 
     <ImageButton
         android:id="@+id/btn_forward"
@@ -66,7 +67,6 @@
         android:layout_marginBottom="16dp"
         android:background="@android:color/holo_red_dark"
         android:contentDescription="@string/rgb_red"
-        android:onClick="onRedButtonClicked"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -79,7 +79,6 @@
         android:layout_marginBottom="16dp"
         android:background="@android:color/holo_green_dark"
         android:contentDescription="@string/rgb_green"
-        android:onClick="onGreenButtonClicked"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/btn_rgb_red" />
 
@@ -92,7 +91,6 @@
         android:layout_marginBottom="16dp"
         android:background="@android:color/holo_blue_dark"
         android:contentDescription="@string/rgb_blue"
-        android:onClick="onBlueButtonClicked"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/btn_rgb_green" />
 
