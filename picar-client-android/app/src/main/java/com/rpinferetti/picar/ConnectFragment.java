@@ -11,7 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
+
+import com.google.android.material.textfield.TextInputEditText;
 
 
 /**
@@ -55,8 +56,8 @@ public class ConnectFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_connect, container, false);
 
-        final EditText addressInput = view.findViewById(R.id.ipaddress_input);
-        final EditText portInput = view.findViewById(R.id.port_input);
+        final TextInputEditText addressInput = view.findViewById(R.id.ipaddress_input);
+        final TextInputEditText portInput = view.findViewById(R.id.port_input);
         addressInput.setText(SERVER_IP);
         portInput.setText(String.valueOf(SERVER_PORT));
 

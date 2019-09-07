@@ -14,14 +14,14 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
     private static final int MOVE_SPEED = 100;
     private static final int TURN_SPEED = 40;
 
-    private TCPSocket mSocket;
+    private static UDPSocket mSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mSocket = new TCPSocket();
+        mSocket = new UDPSocket();
     }
 
     private void moveForward() {
@@ -113,15 +113,15 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
 
     @Override
     public void onConnect(String address, int port) {
-        mSocket.setOnConnectSocketListener(new TCPSocket.OnConnectSocketListener() {
+        mSocket.setOnUDPSocketListener(new UDPSocket.OnUDPSocketListener() {
             @Override
-            public void onSuccess() {
+            public void onConnectSuccess() {
                 showToast("Connesso");
                 Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment).navigate(R.id.action_connectFragment_to_controlFragment);
             }
 
             @Override
-            public void onFailure() {
+            public void onConnectFailure() {
                 showToast("Impossibile connettersi");
             }
         });
