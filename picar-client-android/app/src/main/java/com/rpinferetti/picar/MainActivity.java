@@ -1,6 +1,8 @@
 package com.rpinferetti.picar;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +26,50 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
         mSocket = new UDPSocket();
     }
 
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int action = event.getAction();
+        int keyCode = event.getKeyCode();
+
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BUTTON_R2:
+                Log.d(TAG, "KeyEvent: KEYCODE_BUTTON_R2");
+                if (action == KeyEvent.ACTION_DOWN)
+                    moveForward();
+                else
+                    moveStop();
+                return true;
+
+            case KeyEvent.KEYCODE_BUTTON_L2:
+                Log.d(TAG, "KeyEvent: KEYCODE_BUTTON_L2");
+                if (action == KeyEvent.ACTION_DOWN)
+                    moveBackward();
+                else
+                    moveStop();
+                return true;
+
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                Log.d(TAG, "KeyEvent: KEYCODE_DPAD_RIGHT");
+                if (action == KeyEvent.ACTION_DOWN)
+                    mSocket.sendMessage(Command.TURN_RIGHT + TURN_SPEED);
+                else
+                    mSocket.sendMessage(Command.TURN_CENTER);
+                return true;
+
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+                Log.d(TAG, "KeyEvent: KEYCODE_DPAD_LEFT");
+                if (action == KeyEvent.ACTION_DOWN)
+                    mSocket.sendMessage(Command.TURN_LEFT + TURN_SPEED);
+                else
+                    mSocket.sendMessage(Command.TURN_CENTER);
+                return true;
+        }
+
+        return super.dispatchKeyEvent(event);
+    }
+
     private void moveForward() {
+        Log.d(TAG, "moveForward");
         int i = 3;
         while (i > 0) {
             mSocket.sendMessage(Command.MOVE_FORWARD + MOVE_SPEED / i);
@@ -38,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
     }
 
     private void moveBackward() {
+        Log.d(TAG, "moveBackward");
         int i = 3;
         while (i > 0) {
             mSocket.sendMessage(Command.MOVE_BACKWARD + MOVE_SPEED / i);
@@ -51,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
     }
 
     private void moveStop() {
+        Log.d(TAG, "moveStop");
         mSocket.sendMessage(Command.STOP);
     }
 

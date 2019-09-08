@@ -19,4 +19,5 @@
     <string name="connect_ipaddr">IP Address</string>
     <string name="connect_port">Port</string>
     <string name="connect_connbtn">Connect</string>
+    <string name="connect_gamepad_descr">Connect a gamepad</string>
 </resources>

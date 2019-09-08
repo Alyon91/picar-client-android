@@ -25,6 +25,8 @@ import com.google.android.material.textfield.TextInputEditText;
  */
 public class ConnectFragment extends Fragment {
 
+    private static final String TAG = "ConnectFragment";
+
     private static final String SERVER_IP = "192.168.4.1";
     private static final String SERVER_MACADDR = "b8:27:eb:33:1d:2b";
     private static final int SERVER_PORT = 12345;
@@ -56,11 +58,13 @@ public class ConnectFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_connect, container, false);
 
+        // IP ADDRESS and PORT inputs
         final TextInputEditText addressInput = view.findViewById(R.id.ipaddress_input);
         final TextInputEditText portInput = view.findViewById(R.id.port_input);
         addressInput.setText(SERVER_IP);
         portInput.setText(String.valueOf(SERVER_PORT));
 
+        // Connect button
         Button connectButton = view.findViewById(R.id.connect_button);
         connectButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,10 +75,12 @@ public class ConnectFragment extends Fragment {
             }
         });
 
+        // Force portrait orientation
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         return view;
     }
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -93,19 +99,8 @@ public class ConnectFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnConnectListener {
         void onConnect(String address, int port);
     }
-
 
 }
