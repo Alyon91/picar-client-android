@@ -6,6 +6,7 @@ import android.view.KeyEvent;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 
@@ -16,14 +17,16 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
     private static final int MOVE_SPEED = 100;
     private static final int TURN_SPEED = 40;
 
-    private static UDPSocket mSocket;
+    private NavController mNavController;
+    private UDPSocket mSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mSocket = new UDPSocket();
+        mNavController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        mSocket = UDPSocket.getInstance();
     }
 
     @Override
@@ -164,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
             @Override
             public void onConnectSuccess() {
                 showToast("Connesso");
-                Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment).navigate(R.id.action_connectFragment_to_controlFragment);
+                mNavController.navigate(R.id.action_connectFragment_to_controlFragment);
             }
 
             @Override

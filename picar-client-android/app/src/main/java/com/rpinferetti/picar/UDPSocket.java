@@ -1,6 +1,7 @@
 package com.rpinferetti.picar;
 
 import android.os.AsyncTask;
+import android.provider.ContactsContract;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -11,11 +12,25 @@ import java.net.UnknownHostException;
 public class UDPSocket {
     private static final String TAG = "UDPSocket";
 
-    private static DatagramSocket mSocket;
-    private static InetAddress mServerAddr;
-    private static int mPort;
+    private static UDPSocket mInstance;
+
+    private DatagramSocket mSocket;
+    private InetAddress mServerAddr;
+    private int mPort;
 
     private OnUDPSocketListener mListener;
+
+    public UDPSocket() {
+    }
+
+    public static UDPSocket getInstance() {
+        if (mInstance == null)
+            synchronized (UDPSocket.class) {
+                if (mInstance == null)
+                    mInstance = new UDPSocket();
+            }
+        return mInstance;
+    }
 
     public void connect(String address, int port) {
         try {
@@ -25,9 +40,10 @@ public class UDPSocket {
             e.printStackTrace();
         }
 
-        ConnectTask task = new ConnectTask(address, port, new ConnectTask.OnConnectTaskListener() {
+        ConnectTask task = new ConnectTask(port, new ConnectTask.OnConnectTaskListener() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(DatagramSocket socket) {
+                mSocket = socket;
                 mListener.onConnectSuccess();
             }
 
@@ -72,12 +88,11 @@ public class UDPSocket {
     }
 
     public static class ConnectTask extends AsyncTask<Void, Void, Void> {
-        private String address;
+        private DatagramSocket socket;
         private int port;
         private OnConnectTaskListener listener;
 
-        ConnectTask(String address, int port, OnConnectTaskListener listener) {
-            this.address = address;
+        ConnectTask(int port, OnConnectTaskListener listener) {
             this.port = port;
             this.listener = listener;
         }
@@ -85,7 +100,7 @@ public class UDPSocket {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                mSocket = new DatagramSocket(port);
+                socket = new DatagramSocket(port);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -95,14 +110,14 @@ public class UDPSocket {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if (mSocket != null)
-                listener.onSuccess();
+            if (socket != null)
+                listener.onSuccess(socket);
             else
                 listener.onFailure();
         }
 
         public interface OnConnectTaskListener {
-            void onSuccess();
+            void onSuccess(DatagramSocket socket);
 
             void onFailure();
         }
