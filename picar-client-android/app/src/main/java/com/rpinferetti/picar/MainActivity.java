@@ -2,7 +2,9 @@ package com.rpinferetti.picar;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.InputDevice;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,7 +20,10 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
     private static final int TURN_SPEED = 40;
 
     private NavController mNavController;
+
     private UDPSocket mSocket;
+    private Vehicle mVehicle;
+    private Gamepad mGamepad;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +31,39 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
         setContentView(R.layout.activity_main);
 
         mNavController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
         mSocket = UDPSocket.getInstance();
+        mVehicle = new Vehicle();
+        mGamepad = new Gamepad();
+        mGamepad.setOnGamepadListener(new Gamepad.OnGamepadListener() {
+            @Override
+            public void onLeftTrigger(float value) {
+                int speed = Math.round(value);
+                mVehicle.moveBackward(speed);
+            }
+
+            @Override
+            public void onRightTrigger(float value) {
+                int speed = Math.round(value);
+                mVehicle.moveForward(speed);
+            }
+
+            @Override
+            public void onLeftStick(float x, float y) {
+                int speed = Math.round(x);
+                if (speed > 0)
+                    mVehicle.turnRight(speed);
+                else if (speed < 0)
+                    mVehicle.turnLeft(Math.abs(speed));
+                else
+                    mVehicle.turnCenter();
+            }
+
+            @Override
+            public void onRightStick(float x, float y) {
+                // Do nothing
+            }
+        });
     }
 
     @Override
@@ -35,116 +72,91 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
         int keyCode = event.getKeyCode();
 
         switch (keyCode) {
-            case KeyEvent.KEYCODE_BUTTON_R2:
-                Log.d(TAG, "KeyEvent: KEYCODE_BUTTON_R2");
-                if (action == KeyEvent.ACTION_DOWN)
-                    moveForward();
-                else
-                    moveStop();
-                return true;
-
-            case KeyEvent.KEYCODE_BUTTON_L2:
-                Log.d(TAG, "KeyEvent: KEYCODE_BUTTON_L2");
-                if (action == KeyEvent.ACTION_DOWN)
-                    moveBackward();
-                else
-                    moveStop();
-                return true;
-
             case KeyEvent.KEYCODE_DPAD_RIGHT:
-                Log.d(TAG, "KeyEvent: KEYCODE_DPAD_RIGHT");
                 if (action == KeyEvent.ACTION_DOWN)
-                    mSocket.sendMessage(Command.TURN_RIGHT + TURN_SPEED);
+                    mVehicle.turnRight(TURN_SPEED);
                 else
-                    mSocket.sendMessage(Command.TURN_CENTER);
+                    mVehicle.turnCenter();
                 return true;
 
             case KeyEvent.KEYCODE_DPAD_LEFT:
-                Log.d(TAG, "KeyEvent: KEYCODE_DPAD_LEFT");
                 if (action == KeyEvent.ACTION_DOWN)
-                    mSocket.sendMessage(Command.TURN_LEFT + TURN_SPEED);
+                    mVehicle.turnLeft(TURN_SPEED);
                 else
-                    mSocket.sendMessage(Command.TURN_CENTER);
+                    mVehicle.turnCenter();
                 return true;
         }
 
         return super.dispatchKeyEvent(event);
     }
 
-    private void moveForward() {
-        Log.d(TAG, "moveForward");
-        int i = 3;
-        while (i > 0) {
-            mSocket.sendMessage(Command.MOVE_FORWARD + MOVE_SPEED / i);
-            i--;
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+    @Override
+    public boolean dispatchGenericMotionEvent(MotionEvent event) {
+
+        // Check that the event came from a game controller
+        if ((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK &&
+                event.getAction() == MotionEvent.ACTION_MOVE) {
+
+            // Process all historical movement samples in the batch
+            final int historySize = event.getHistorySize();
+
+            // Process the movements starting from the
+            // earliest historical position in the batch
+            for (int i = 0; i < historySize; i++) {
+                // Process the event at historical position i
+                mGamepad.processJoystickInput(event, i);
             }
+
+            // Process the current movement sample in the batch (position -1)
+            mGamepad.processJoystickInput(event, -1);
+            return true;
         }
+
+        return super.dispatchGenericMotionEvent(event);
     }
 
-    private void moveBackward() {
-        Log.d(TAG, "moveBackward");
-        int i = 3;
-        while (i > 0) {
-            mSocket.sendMessage(Command.MOVE_BACKWARD + MOVE_SPEED / i);
-            i--;
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void moveStop() {
-        Log.d(TAG, "moveStop");
-        mSocket.sendMessage(Command.STOP);
-    }
 
     @Override
     public void onControlButtonPressed(int button) {
         switch (button) {
             case STOP:
-                moveStop();
+                mVehicle.moveStop();
                 break;
 
             case FORWARD:
-                moveForward();
+                mVehicle.moveForward(MOVE_SPEED);
                 break;
 
             case BACKWARD:
-                moveBackward();
+                mVehicle.moveBackward(MOVE_SPEED);
                 break;
 
             case LEFT:
-                mSocket.sendMessage(Command.TURN_LEFT + TURN_SPEED);
+                mVehicle.turnLeft(TURN_SPEED);
                 break;
 
             case RIGHT:
-                mSocket.sendMessage(Command.TURN_RIGHT + TURN_SPEED);
+                mVehicle.turnRight(TURN_SPEED);
                 break;
 
             case CENTER:
-                mSocket.sendMessage(Command.TURN_CENTER);
+                mVehicle.turnCenter();
                 break;
 
             case RGB_BLUE:
-                mSocket.sendMessage(Command.RGB_BLUE);
+                mVehicle.rgbBlue();
                 break;
 
             case RGB_GREEN:
-                mSocket.sendMessage(Command.RGB_GREEN);
+                mVehicle.rgbGreen();
                 break;
 
             case RGB_RED:
-                mSocket.sendMessage(Command.RGB_RED);
+                mVehicle.rgbRed();
                 break;
 
             case BUZZER:
-                mSocket.sendMessage(Command.BUZZER_ALARM);
+                mVehicle.buzzer();
                 break;
 
             default:

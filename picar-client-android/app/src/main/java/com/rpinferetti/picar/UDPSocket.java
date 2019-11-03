@@ -1,6 +1,7 @@
 package com.rpinferetti.picar;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -63,6 +64,7 @@ public class UDPSocket {
     }
 
     public void sendMessage(final String msg) {
+        Log.d(TAG, msg);
         if (mSocket != null) {
             new Thread(new Runnable() {
                 @Override

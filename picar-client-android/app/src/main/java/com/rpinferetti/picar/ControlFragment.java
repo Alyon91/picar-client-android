@@ -15,14 +15,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ControlFragment.OnControlListener} interface
- * to handle interaction events.
- * Use the {@link ControlFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ControlFragment extends Fragment {
 
     private OnControlListener mListener;
@@ -32,9 +24,6 @@ public class ControlFragment extends Fragment {
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
      * @return A new instance of fragment ControlFragment.
      */
     static ControlFragment newInstance() {
@@ -134,7 +123,7 @@ public class ControlFragment extends Fragment {
         redButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.onControlButtonPressed(OnControlListener.RGB_BLUE);
+                mListener.onControlButtonPressed(OnControlListener.RGB_RED);
             }
         });
 
@@ -142,7 +131,7 @@ public class ControlFragment extends Fragment {
         greenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.onControlButtonPressed(OnControlListener.RGB_BLUE);
+                mListener.onControlButtonPressed(OnControlListener.RGB_GREEN);
             }
         });
 
@@ -181,16 +170,11 @@ public class ControlFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+    public void setMotionEvent() {
+
+    }
+
+
     public interface OnControlListener {
         int STOP = 0;
         int FORWARD = 1;

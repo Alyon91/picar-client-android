@@ -15,20 +15,11 @@ import android.widget.Button;
 import com.google.android.material.textfield.TextInputEditText;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ConnectFragment.OnConnectListener} interface
- * to handle interaction events.
- * Use the {@link ConnectFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ConnectFragment extends Fragment {
 
     private static final String TAG = "ConnectFragment";
 
     private static final String SERVER_IP = "192.168.4.1";
-    private static final String SERVER_MACADDR = "b8:27:eb:33:1d:2b";
     private static final int SERVER_PORT = 12345;
 
     private OnConnectListener mListener;
@@ -38,9 +29,6 @@ public class ConnectFragment extends Fragment {
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
      * @return A new instance of fragment ConnectFragment.
      */
     static ConnectFragment newInstance() {
