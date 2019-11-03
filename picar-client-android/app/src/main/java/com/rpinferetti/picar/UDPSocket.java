@@ -1,7 +1,6 @@
 package com.rpinferetti.picar;
 
 import android.os.AsyncTask;
-import android.provider.ContactsContract;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -33,6 +32,9 @@ public class UDPSocket {
     }
 
     public void connect(String address, int port) {
+        if (mSocket != null)
+            disconnect();
+
         try {
             mServerAddr = InetAddress.getByName(address);
             mPort = port;
@@ -40,7 +42,7 @@ public class UDPSocket {
             e.printStackTrace();
         }
 
-        ConnectTask task = new ConnectTask(port, new ConnectTask.OnConnectTaskListener() {
+        ConnectTask task = new ConnectTask(mServerAddr, mPort, new ConnectTask.OnConnectTaskListener() {
             @Override
             public void onSuccess(DatagramSocket socket) {
                 mSocket = socket;
@@ -89,10 +91,12 @@ public class UDPSocket {
 
     public static class ConnectTask extends AsyncTask<Void, Void, Void> {
         private DatagramSocket socket;
+        private InetAddress address;
         private int port;
         private OnConnectTaskListener listener;
 
-        ConnectTask(int port, OnConnectTaskListener listener) {
+        ConnectTask(InetAddress address, int port, OnConnectTaskListener listener) {
+            this.address = address;
             this.port = port;
             this.listener = listener;
         }
@@ -101,6 +105,7 @@ public class UDPSocket {
         protected Void doInBackground(Void... voids) {
             try {
                 socket = new DatagramSocket(port);
+                socket.connect(address, port);
             } catch (IOException e) {
                 e.printStackTrace();
             }
