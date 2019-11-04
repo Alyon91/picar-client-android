@@ -63,19 +63,15 @@ public class Gamepad {
         float rt = historyPos < 0 ? event.getAxisValue(MotionEvent.AXIS_GAS) :
                 event.getHistoricalAxisValue(MotionEvent.AXIS_GAS, historyPos);
 
-        // TODO: implement better input handling
-        mListener.onLeftStick(lx * 100, ly * 100);
-        mListener.onRightStick(rx * 100, ry * 100);
+        GamepadMap map = new GamepadMap();
+        map.setLeftStickX(lx * 100);
+        map.setLeftStickY(ly * 100);
+        map.setRightStickX(rx * 100);
+        map.setRightStickY(ry * 100);
+        map.setLeftShoulderTrigger(lt * 100);
+        map.setRightShoulderTrigger(rt * 100);
 
-        if (rt > 0 && lt == 0)
-            mListener.onRightTrigger(rt * 100);
-        if (lt > 0 && rt == 0)
-            mListener.onLeftTrigger(lt * 100);
-
-        if (rt == 0 && lt == 0) {
-            mListener.onRightTrigger(0);
-            mListener.onLeftTrigger(0);
-        }
+        mListener.onGamepadMapChanged(map);
     }
 
     public void setOnGamepadListener(OnGamepadListener listener) {
@@ -83,12 +79,6 @@ public class Gamepad {
     }
 
     public interface OnGamepadListener {
-        void onLeftTrigger(float value);
-
-        void onRightTrigger(float value);
-
-        void onLeftStick(float x, float y);
-
-        void onRightStick(float x, float y);
+        void onGamepadMapChanged(GamepadMap map);
     }
 }

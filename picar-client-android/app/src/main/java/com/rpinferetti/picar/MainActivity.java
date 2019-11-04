@@ -1,6 +1,7 @@
 package com.rpinferetti.picar;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.InputDevice;
 import android.view.KeyEvent;
@@ -22,8 +23,13 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
     private NavController mNavController;
 
     private UDPSocket mSocket;
+
+    private Handler mHandler;
+    private Runnable mGamepadRunnable;
+
     private Vehicle mVehicle;
     private Gamepad mGamepad;
+    private GamepadMap mGamepadMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,33 +43,69 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
         mGamepad = new Gamepad();
         mGamepad.setOnGamepadListener(new Gamepad.OnGamepadListener() {
             @Override
-            public void onLeftTrigger(float value) {
-                int speed = Math.round(value);
-                mVehicle.moveBackward(speed);
-            }
-
-            @Override
-            public void onRightTrigger(float value) {
-                int speed = Math.round(value);
-                mVehicle.moveForward(speed);
-            }
-
-            @Override
-            public void onLeftStick(float x, float y) {
-                int speed = Math.round(x);
-                if (speed > 0)
-                    mVehicle.turnRight(speed);
-                else if (speed < 0)
-                    mVehicle.turnLeft(Math.abs(speed));
-                else
-                    mVehicle.turnCenter();
-            }
-
-            @Override
-            public void onRightStick(float x, float y) {
-                // Do nothing
+            public void onGamepadMapChanged(GamepadMap map) {
+                if (map != null)
+                    mGamepadMap = map;
             }
         });
+
+        mHandler = new Handler();
+        startGamepadPolling();
+    }
+
+    private void startGamepadPolling() {
+        mGamepadRunnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (mGamepadMap != null) {
+                        if (mGamepadMap.getLeftStickX() == 0) {
+                            mVehicle.turnCenter();
+                            Thread.sleep(10);
+                        }
+
+                        if (mGamepadMap.getLeftStickX() > 0) {
+                            int speed = Math.round(mGamepadMap.getLeftStickX());
+                            mVehicle.turnRight(speed);
+                            Thread.sleep(10);
+                        }
+
+                        if (mGamepadMap.getLeftStickX() < 0) {
+                            int speed = Math.round(mGamepadMap.getLeftStickX());
+                            mVehicle.turnLeft(Math.abs(speed));
+                            Thread.sleep(10);
+                        }
+
+                        if (mGamepadMap.getRightShoulderTrigger() == 0 && mGamepadMap.getLeftShoulderTrigger() == 0) {
+                            mVehicle.moveStop();
+                            Thread.sleep(10);
+                        }
+
+                        if (mGamepadMap.getRightShoulderTrigger() > 0) {
+                            int speed = Math.round(mGamepadMap.getRightShoulderTrigger());
+                            mVehicle.moveForward(speed);
+                            Thread.sleep(10);
+                        }
+
+                        if (mGamepadMap.getLeftShoulderTrigger() > 0) {
+                            int speed = Math.round(mGamepadMap.getLeftShoulderTrigger());
+                            mVehicle.moveBackward(speed);
+                            Thread.sleep(10);
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    mHandler.postDelayed(this, 100);
+                }
+            }
+        };
+
+        mGamepadRunnable.run();
+    }
+
+    private void stopGamepadPolling() {
+        mHandler.removeCallbacks(mGamepadRunnable);
     }
 
     @Override
@@ -190,4 +232,9 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
         mSocket.connect(address, port);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopGamepadPolling();
+    }
 }
