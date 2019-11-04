@@ -8,9 +8,11 @@ public class Gamepad {
 
     private static final String TAG = "Gamepad";
 
+    private GamepadMap mGamepadMap;
     private OnGamepadListener mListener;
 
     public Gamepad() {
+        mGamepadMap = new GamepadMap();
     }
 
     private static float getCenteredAxis(MotionEvent event, InputDevice device,
@@ -63,15 +65,14 @@ public class Gamepad {
         float rt = historyPos < 0 ? event.getAxisValue(MotionEvent.AXIS_GAS) :
                 event.getHistoricalAxisValue(MotionEvent.AXIS_GAS, historyPos);
 
-        GamepadMap map = new GamepadMap();
-        map.setLeftStickX(lx * 100);
-        map.setLeftStickY(ly * 100);
-        map.setRightStickX(rx * 100);
-        map.setRightStickY(ry * 100);
-        map.setLeftShoulderTrigger(lt * 100);
-        map.setRightShoulderTrigger(rt * 100);
+        mGamepadMap.setLeftStickX(lx * 100);
+        mGamepadMap.setLeftStickY(ly * 100);
+        mGamepadMap.setRightStickX(rx * 100);
+        mGamepadMap.setRightStickY(ry * 100);
+        mGamepadMap.setLeftShoulderTrigger(lt * 100);
+        mGamepadMap.setRightShoulderTrigger(rt * 100);
 
-        mListener.onGamepadMapChanged(map);
+        mListener.onGamepadMapChanged(mGamepadMap);
     }
 
     public void setOnGamepadListener(OnGamepadListener listener) {
