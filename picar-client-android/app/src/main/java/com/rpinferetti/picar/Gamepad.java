@@ -2,6 +2,7 @@ package com.rpinferetti.picar;
 
 import android.util.Log;
 import android.view.InputDevice;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 public class Gamepad {
@@ -15,8 +16,45 @@ public class Gamepad {
         mGamepadMap = new GamepadMap();
     }
 
-    private static float getCenteredAxis(MotionEvent event, InputDevice device,
-                                         int axis, int historyPos) {
+    public void handleButtonPressed(KeyEvent event) {
+        int action = event.getAction();
+        int keyCode = event.getKeyCode();
+
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BUTTON_X:
+                if (action == KeyEvent.ACTION_DOWN)
+                    mGamepadMap.setButtonX(true);
+                else
+                    mGamepadMap.setButtonX(false);
+                break;
+
+            case KeyEvent.KEYCODE_BUTTON_A:
+                if (action == KeyEvent.ACTION_DOWN)
+                    mGamepadMap.setButtonA(true);
+                else
+                    mGamepadMap.setButtonA(false);
+                break;
+
+            case KeyEvent.KEYCODE_BUTTON_Y:
+                if (action == KeyEvent.ACTION_DOWN)
+                    mGamepadMap.setButtonY(true);
+                else
+                    mGamepadMap.setButtonY(false);
+                break;
+
+            case KeyEvent.KEYCODE_BUTTON_B:
+                if (action == KeyEvent.ACTION_DOWN)
+                    mGamepadMap.setButtonB(true);
+                else
+                    mGamepadMap.setButtonB(false);
+                break;
+        }
+
+        mListener.onGamepadMapChanged(mGamepadMap);
+    }
+
+    private float getCenteredAxis(MotionEvent event, InputDevice device,
+                                  int axis, int historyPos) {
         final InputDevice.MotionRange range = device.getMotionRange(axis, event.getSource());
 
         // A joystick at rest does not always report an absolute position of

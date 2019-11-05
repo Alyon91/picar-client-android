@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
     private Vehicle mVehicle;
     private Gamepad mGamepad;
     private GamepadMap mGamepadMap;
+    private GamepadMap mPrevGamepadMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,12 +41,15 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
 
         mSocket = UDPSocket.getInstance();
         mVehicle = new Vehicle();
+
         mGamepad = new Gamepad();
         mGamepad.setOnGamepadListener(new Gamepad.OnGamepadListener() {
             @Override
             public void onGamepadMapChanged(GamepadMap map) {
-                if (map != null)
+                if (map != null) {
+                    mPrevGamepadMap = mGamepadMap;
                     mGamepadMap = map;
+                }
             }
         });
 
@@ -76,7 +80,8 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
                             Thread.sleep(10);
                         }
 
-                        if (mGamepadMap.getRightShoulderTrigger() == 0 && mGamepadMap.getLeftShoulderTrigger() == 0) {
+                        if (mGamepadMap.getRightShoulderTrigger() == 0 &&
+                                mGamepadMap.getLeftShoulderTrigger() == 0) {
                             mVehicle.moveStop();
                             Thread.sleep(10);
                         }
@@ -90,6 +95,26 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
                         if (mGamepadMap.getLeftShoulderTrigger() > 0) {
                             int speed = Math.round(mGamepadMap.getLeftShoulderTrigger());
                             mVehicle.moveBackward(speed);
+                            Thread.sleep(10);
+                        }
+
+                        if (mGamepadMap.isButtonX()) {
+                            mVehicle.rgbBlue();
+                            Thread.sleep(10);
+                        }
+
+                        if (mGamepadMap.isButtonA()) {
+                            mVehicle.rgbGreen();
+                            Thread.sleep(10);
+                        }
+
+                        if (mGamepadMap.isButtonB()) {
+                            mVehicle.rgbRed();
+                            Thread.sleep(10);
+                        }
+
+                        if (mGamepadMap.isButtonY()) {
+                            mVehicle.buzzer();
                             Thread.sleep(10);
                         }
                     }
@@ -110,31 +135,19 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        int action = event.getAction();
-        int keyCode = event.getKeyCode();
-
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_DPAD_RIGHT:
-                if (action == KeyEvent.ACTION_DOWN)
-                    mVehicle.turnRight(TURN_SPEED);
-                else
-                    mVehicle.turnCenter();
+        if ((event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) {
+            if (event.getRepeatCount() == 0) {
+                mGamepad.handleButtonPressed(event);
                 return true;
-
-            case KeyEvent.KEYCODE_DPAD_LEFT:
-                if (action == KeyEvent.ACTION_DOWN)
-                    mVehicle.turnLeft(TURN_SPEED);
-                else
-                    mVehicle.turnCenter();
-                return true;
+            }
         }
 
         return super.dispatchKeyEvent(event);
     }
 
+
     @Override
     public boolean dispatchGenericMotionEvent(MotionEvent event) {
-
         // Check that the event came from a game controller
         if ((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK &&
                 event.getAction() == MotionEvent.ACTION_MOVE) {
