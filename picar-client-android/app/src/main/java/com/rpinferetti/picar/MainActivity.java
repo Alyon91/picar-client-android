@@ -30,7 +30,13 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
     private Vehicle mVehicle;
     private Gamepad mGamepad;
     private GamepadMap mGamepadMap;
-    private GamepadMap mPrevGamepadMap;
+
+    private boolean isButtonXPressed = false;
+    private boolean isButtonAPressed = false;
+    private boolean isButtonBPressed = false;
+    private boolean isButtonYPressed = false;
+    private boolean isStopped = true;
+    private boolean isCentered = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +52,8 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
         mGamepad.setOnGamepadListener(new Gamepad.OnGamepadListener() {
             @Override
             public void onGamepadMapChanged(GamepadMap map) {
-                if (map != null) {
-                    mPrevGamepadMap = mGamepadMap;
+                if (map != null)
                     mGamepadMap = map;
-                }
             }
         });
 
@@ -63,36 +67,42 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
             public void run() {
                 try {
                     if (mGamepadMap != null) {
-                        if (mGamepadMap.getLeftStickX() == 0) {
+                        if (mGamepadMap.getLeftStickX() == 0 && !isCentered) {
+                            isCentered = true;
                             mVehicle.turnCenter();
                             Thread.sleep(10);
                         }
 
                         if (mGamepadMap.getLeftStickX() > 0) {
+                            isCentered = false;
                             int speed = Math.round(mGamepadMap.getLeftStickX());
                             mVehicle.turnRight(speed);
                             Thread.sleep(10);
                         }
 
                         if (mGamepadMap.getLeftStickX() < 0) {
+                            isCentered = false;
                             int speed = Math.round(mGamepadMap.getLeftStickX());
                             mVehicle.turnLeft(Math.abs(speed));
                             Thread.sleep(10);
                         }
 
                         if (mGamepadMap.getRightShoulderTrigger() == 0 &&
-                                mGamepadMap.getLeftShoulderTrigger() == 0) {
+                                mGamepadMap.getLeftShoulderTrigger() == 0 && !isStopped) {
+                            isStopped = true;
                             mVehicle.moveStop();
                             Thread.sleep(10);
                         }
 
                         if (mGamepadMap.getRightShoulderTrigger() > 0) {
+                            isStopped = false;
                             int speed = Math.round(mGamepadMap.getRightShoulderTrigger());
                             mVehicle.moveForward(speed);
                             Thread.sleep(10);
                         }
 
                         if (mGamepadMap.getLeftShoulderTrigger() > 0) {
+                            isStopped = false;
                             int speed = Math.round(mGamepadMap.getLeftShoulderTrigger());
                             mVehicle.moveBackward(speed);
                             Thread.sleep(10);
@@ -113,7 +123,14 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
                             Thread.sleep(10);
                         }
 
-                        if (mGamepadMap.isButtonY()) {
+                        if (mGamepadMap.isButtonY() && !isButtonYPressed) {
+                            isButtonYPressed = true;
+                            mVehicle.buzzer();
+                            Thread.sleep(10);
+                        }
+
+                        if (!mGamepadMap.isButtonY() && isButtonYPressed) {
+                            isButtonYPressed = false;
                             mVehicle.buzzer();
                             Thread.sleep(10);
                         }
@@ -121,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
-                    mHandler.postDelayed(this, 100);
+                    mHandler.postDelayed(this, 80);
                 }
             }
         };

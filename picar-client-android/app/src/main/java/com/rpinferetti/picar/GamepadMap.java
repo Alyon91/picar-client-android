@@ -5,6 +5,24 @@ public class GamepadMap {
     private boolean buttonA;
     private boolean buttonY;
     private boolean buttonB;
+    private boolean buttonR1;
+    private boolean buttonL1;
+
+    public boolean isButtonR1() {
+        return buttonR1;
+    }
+
+    public void setButtonR1(boolean buttonR1) {
+        this.buttonR1 = buttonR1;
+    }
+
+    public boolean isButtonL1() {
+        return buttonL1;
+    }
+
+    public void setButtonL1(boolean buttonL1) {
+        this.buttonL1 = buttonL1;
+    }
 
     private float leftStickX;
     private float leftStickY;

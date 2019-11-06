@@ -1,13 +1,10 @@
 package com.rpinferetti.picar;
 
-import android.util.Log;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 public class Gamepad {
-
-    private static final String TAG = "Gamepad";
 
     private GamepadMap mGamepadMap;
     private OnGamepadListener mListener;
@@ -47,6 +44,20 @@ public class Gamepad {
                     mGamepadMap.setButtonB(true);
                 else
                     mGamepadMap.setButtonB(false);
+                break;
+
+            case KeyEvent.KEYCODE_BUTTON_R1:
+                if (action == KeyEvent.ACTION_DOWN)
+                    mGamepadMap.setButtonR1(true);
+                else
+                    mGamepadMap.setButtonR1(false);
+                break;
+
+            case KeyEvent.KEYCODE_BUTTON_L1:
+                if (action == KeyEvent.ACTION_DOWN)
+                    mGamepadMap.setButtonL1(true);
+                else
+                    mGamepadMap.setButtonL1(false);
                 break;
         }
 

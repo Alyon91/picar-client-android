@@ -1,7 +1,6 @@
 package com.rpinferetti.picar;
 
 public interface Command {
-
     String MOVE_FORWARD = ">Move Forward";
     String MOVE_BACKWARD = ">Move Backward";
     String TURN_LEFT = ">Turn Left";
