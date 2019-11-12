@@ -1,4 +1,4 @@
-package com.rpinferetti.picar;
+package com.rpinferetti.picar.ui;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.rpinferetti.picar.R;
 
 
 public class ConnectFragment extends Fragment {
@@ -59,7 +60,7 @@ public class ConnectFragment extends Fragment {
             public void onClick(View view) {
                 String addr = addressInput.getText().toString();
                 String port = portInput.getText().toString();
-                mListener.onConnect(addr, Integer.parseInt(port));
+                mListener.onConnectButtonPressed(addr, Integer.parseInt(port));
             }
         });
 
@@ -88,7 +89,7 @@ public class ConnectFragment extends Fragment {
     }
 
     public interface OnConnectListener {
-        void onConnect(String address, int port);
+        void onConnectButtonPressed(String address, int port);
     }
 
 }

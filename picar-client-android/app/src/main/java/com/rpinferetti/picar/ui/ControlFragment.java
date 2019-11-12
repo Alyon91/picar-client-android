@@ -1,4 +1,4 @@
-package com.rpinferetti.picar;
+package com.rpinferetti.picar.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -13,6 +13,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+
+import com.rpinferetti.picar.R;
 
 
 public class ControlFragment extends Fragment {
@@ -150,6 +152,14 @@ public class ControlFragment extends Fragment {
                 return false;
             }
         });
+
+        ImageButton cameraButton = view.findViewById(R.id.btn_camera);
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onControlButtonPressed(OnControlListener.CAMERA);
+            }
+        });
     }
 
 
@@ -170,10 +180,6 @@ public class ControlFragment extends Fragment {
         mListener = null;
     }
 
-    public void setMotionEvent() {
-
-    }
-
 
     public interface OnControlListener {
         int STOP = 0;
@@ -186,6 +192,7 @@ public class ControlFragment extends Fragment {
         int RGB_RED = 7;
         int RGB_GREEN = 8;
         int BUZZER = 9;
+        int CAMERA = 10;
 
         void onControlButtonPressed(int button);
     }

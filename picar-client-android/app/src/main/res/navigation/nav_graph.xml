@@ -7,16 +7,29 @@
 
     <fragment
         android:id="@+id/connectFragment"
-        android:name="com.rpinferetti.picar.ConnectFragment"
+        android:name="com.rpinferetti.picar.ui.ConnectFragment"
         android:label="fragment_connect"
-        tools:layout="@layout/fragment_connect" >
+        tools:layout="@layout/fragment_connect">
         <action
             android:id="@+id/action_connectFragment_to_controlFragment"
             app:destination="@id/controlFragment" />
     </fragment>
     <fragment
         android:id="@+id/controlFragment"
-        android:name="com.rpinferetti.picar.ControlFragment"
+        android:name="com.rpinferetti.picar.ui.ControlFragment"
         android:label="fragment_control"
-        tools:layout="@layout/fragment_control" />
+        tools:layout="@layout/fragment_control">
+        <action
+            android:id="@+id/action_controlFragment_to_videoPlayerFragment"
+            app:destination="@id/videoPlayerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/videoPlayerFragment"
+        android:name="com.rpinferetti.picar.ui.VideoPlayerFragment"
+        android:label="fragment_video_player"
+        tools:layout="@layout/fragment_video_player" >
+        <argument
+            android:name="URL"
+            app:argType="string" />
+    </fragment>
 </navigation>

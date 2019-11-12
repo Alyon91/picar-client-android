@@ -8,9 +8,13 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+
+import com.rpinferetti.picar.ui.ConnectFragment;
+import com.rpinferetti.picar.ui.ControlFragment;
 
 
 public class MainActivity extends AppCompatActivity implements ControlFragment.OnControlListener, ConnectFragment.OnConnectListener {
@@ -18,11 +22,13 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
     private static final String TAG = "MainActivity";
 
     private static final int MOVE_SPEED = 100;
-    private static final int TURN_SPEED = 40;
+    private static final int TURN_SPEED = 100;
 
     private NavController mNavController;
 
     private UDPSocket mSocket;
+    private String mAddress;
+    private int mPort;
 
     private Handler mHandler;
     private Runnable mGamepadRunnable;
@@ -31,9 +37,6 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
     private Gamepad mGamepad;
     private GamepadMap mGamepadMap;
 
-    private boolean isButtonXPressed = false;
-    private boolean isButtonAPressed = false;
-    private boolean isButtonBPressed = false;
     private boolean isButtonYPressed = false;
     private boolean isStopped = true;
     private boolean isCentered = true;
@@ -46,8 +49,20 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
         mNavController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
         mSocket = UDPSocket.getInstance();
-        mVehicle = new Vehicle();
+        mSocket.setOnUDPSocketListener(new UDPSocket.OnUDPSocketListener() {
+            @Override
+            public void onConnectSuccess() {
+                showToast("Connesso");
+                mNavController.navigate(R.id.action_connectFragment_to_controlFragment);
+            }
 
+            @Override
+            public void onConnectFailure() {
+                showToast("Impossibile connettersi");
+            }
+        });
+
+        mVehicle = new Vehicle();
         mGamepad = new Gamepad();
         mGamepad.setOnGamepadListener(new Gamepad.OnGamepadListener() {
             @Override
@@ -231,6 +246,12 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
                 mVehicle.buzzer();
                 break;
 
+            case CAMERA:
+                Bundle bundle = new Bundle();
+                bundle.putString("URL", "http://" + mAddress + ":8090/?action=stream");
+                mNavController.navigate(R.id.action_controlFragment_to_videoPlayerFragment, bundle);
+                break;
+
             default:
                 showToast("Invalid command");
         }
@@ -246,25 +267,34 @@ public class MainActivity extends AppCompatActivity implements ControlFragment.O
     }
 
     @Override
-    public void onConnect(String address, int port) {
-        mSocket.setOnUDPSocketListener(new UDPSocket.OnUDPSocketListener() {
-            @Override
-            public void onConnectSuccess() {
-                showToast("Connesso");
-                mNavController.navigate(R.id.action_connectFragment_to_controlFragment);
-            }
-
-            @Override
-            public void onConnectFailure() {
-                showToast("Impossibile connettersi");
-            }
-        });
-        mSocket.connect(address, port);
+    public void onConnectButtonPressed(String address, int port) {
+        if (address != null && !address.isEmpty() && port > 0 && port < 65535) {
+            mAddress = address;
+            mPort = port;
+            mSocket.connect(address, port);
+        }
     }
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy()");
         super.onDestroy();
         stopGamepadPolling();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        Log.d(TAG, "onSaveInstanceState()");
+        outState.putString("SERVER_ADDR", mAddress);
+        outState.putInt("SERVER_PORT", mPort);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        Log.d(TAG, "onRestoreInstanceState()");
+        super.onRestoreInstanceState(savedInstanceState);
+        mAddress = savedInstanceState.getString("SERVER_ADDR");
+        mPort = savedInstanceState.getInt("SERVER_PORT");
     }
 }

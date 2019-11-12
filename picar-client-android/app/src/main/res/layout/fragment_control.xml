@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ControlFragment">
+    android:background="@android:color/background_light"
+    tools:context=".ui.ControlFragment">
 
     <ImageButton
         android:id="@+id/btn_forward"
         android:layout_width="100dp"
         android:layout_height="60dp"
-        android:layout_marginTop="16dp"
         android:background="@android:color/black"
         android:contentDescription="@string/move_forward"
         android:src="@drawable/ic_arrow_up_white_24dp"
@@ -23,6 +23,7 @@
         android:id="@+id/btn_backward"
         android:layout_width="100dp"
         android:layout_height="60dp"
+        android:layout_marginBottom="8dp"
         android:background="@android:color/black"
         android:contentDescription="@string/move_backward"
         android:src="@drawable/ic_arrow_down_white_24dp"
@@ -63,46 +64,59 @@
         android:layout_width="100dp"
         android:layout_height="60dp"
         android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
         android:background="@android:color/holo_red_dark"
         android:contentDescription="@string/rgb_red"
-        app:layout_constraintBottom_toTopOf="@id/btn_buzzer"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_backward" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <!-- Green Button -->
     <ImageButton
         android:id="@+id/btn_rgb_green"
         android:layout_width="100dp"
         android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
         android:background="@android:color/holo_green_dark"
         android:contentDescription="@string/rgb_green"
-        app:layout_constraintBottom_toTopOf="@id/btn_buzzer"
-        app:layout_constraintEnd_toStartOf="@id/btn_rgb_blue"
-        app:layout_constraintStart_toEndOf="@id/btn_rgb_red"
-        app:layout_constraintTop_toBottomOf="@id/btn_backward" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btn_rgb_red" />
 
     <!-- Blue Button -->
     <ImageButton
         android:id="@+id/btn_rgb_blue"
         android:layout_width="100dp"
         android:layout_height="60dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
         android:background="@android:color/holo_blue_dark"
         android:contentDescription="@string/rgb_blue"
-        app:layout_constraintBottom_toTopOf="@id/btn_buzzer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_backward" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btn_rgb_green" />
+
+    <!-- Camera Button -->
+    <ImageButton
+        android:id="@+id/btn_camera"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_button_outline"
+        android:contentDescription="@string/camera"
+        android:src="@drawable/ic_videocam_black_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_buzzer" />
 
     <!-- Buzzer Button -->
     <ImageButton
         android:id="@+id/btn_buzzer"
         android:layout_width="100dp"
         android:layout_height="60dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/bg_button_outline"
         android:contentDescription="@string/buzzer"
         android:src="@drawable/ic_volume_up_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
