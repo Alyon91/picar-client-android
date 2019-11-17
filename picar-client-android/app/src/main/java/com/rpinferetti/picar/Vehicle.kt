@@ -1,8 +1,6 @@
 package com.rpinferetti.picar
 
-class Vehicle {
-
-    private val mSocket: UDPSocket = UDPSocket.getInstance()
+class Vehicle(var mSocket: MySocket) {
 
     fun moveForward(speed: Int) {
         mSocket.sendMessage(Command.MOVE_FORWARD + speed)

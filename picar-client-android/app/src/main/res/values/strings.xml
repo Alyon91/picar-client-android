@@ -21,4 +21,6 @@
     <string name="connect_port">Port</string>
     <string name="connect_connbtn">Connect</string>
     <string name="connect_gamepad_descr">Connect a gamepad</string>
+    <string name="connect_radio_tcp">TCP</string>
+    <string name="connect_radio_udp">UDP</string>
 </resources>
