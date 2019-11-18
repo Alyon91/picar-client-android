@@ -22,9 +22,6 @@ class TCPSocket : MySocket, Parcelable {
     constructor(address: String, port: Int) : super(address, port)
 
     override fun connect() {
-        if (mSocket != null)
-            disconnect()
-
         val task = ConnectTask(mAddress, port, object : ConnectTask.OnConnectTaskListener {
             override fun onSuccess(socket: Socket, bufferOut: Writer?) {
                 mSocket = socket

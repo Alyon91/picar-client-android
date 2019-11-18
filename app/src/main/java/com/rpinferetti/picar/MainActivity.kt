@@ -19,7 +19,7 @@ import kotlin.math.roundToInt
 
 
 class MainActivity : AppCompatActivity(), ControlFragment.OnControlListener,
-    ConnectFragment.OnConnectListener {
+        ConnectFragment.OnConnectListener {
 
     private var mNavController: NavController? = null
 
@@ -50,12 +50,10 @@ class MainActivity : AppCompatActivity(), ControlFragment.OnControlListener,
                 mGamepadMap = map
             }
         })
-
-        mHandler = Handler()
-        startGamepadPolling()
     }
 
     private fun startGamepadPolling() {
+        mHandler = Handler()
         mGamepadRunnable = object : Runnable {
             override fun run() {
                 try {
@@ -82,7 +80,7 @@ class MainActivity : AppCompatActivity(), ControlFragment.OnControlListener,
                             }
 
                             if (it.rightShoulderTrigger == 0f &&
-                                it.leftShoulderTrigger == 0f && !isStopped
+                                    it.leftShoulderTrigger == 0f && !isStopped
                             ) {
                                 isStopped = true
                                 moveStop()
@@ -207,8 +205,8 @@ class MainActivity : AppCompatActivity(), ControlFragment.OnControlListener,
                 val bundle = Bundle()
                 bundle.putString("URL", "http://$mAddress:8090/?action=stream")
                 mNavController?.navigate(
-                    R.id.action_controlFragment_to_videoPlayerFragment,
-                    bundle
+                        R.id.action_controlFragment_to_videoPlayerFragment,
+                        bundle
                 )
             }
 
@@ -221,12 +219,14 @@ class MainActivity : AppCompatActivity(), ControlFragment.OnControlListener,
     }
 
     override fun onConnectButtonPressed(address: String?, port: Int, sockType: Int) {
+        mSocket?.disconnect()
+
         if (address != null && address.isNotEmpty() && port > 0 && port < 65535) {
             when (sockType) {
                 ConnectFragment.SOCK_TCP -> mSocket =
-                    TCPSocket(address, port)
+                        TCPSocket(address, port)
                 ConnectFragment.SOCK_UDP -> mSocket =
-                    UDPSocket(address, port)
+                        UDPSocket(address, port)
             }
 
             mSocket?.onMySocketListener = object : MySocket.OnMySocketListener {
@@ -245,9 +245,13 @@ class MainActivity : AppCompatActivity(), ControlFragment.OnControlListener,
         }
     }
 
-    override fun onDestroy() {
-        Log.d(TAG, "onDestroy()")
-        super.onDestroy()
+    override fun onResume() {
+        super.onResume()
+        startGamepadPolling()
+    }
+
+    override fun onPause() {
+        super.onPause()
         stopGamepadPolling()
     }
 
