@@ -2,7 +2,6 @@ package com.rpinferetti.picar
 
 import android.os.Bundle
 import android.os.Handler
-import android.os.PersistableBundle
 import android.util.Log
 import android.view.InputDevice
 import android.view.KeyEvent
@@ -19,7 +18,7 @@ import kotlin.math.roundToInt
 
 
 class MainActivity : AppCompatActivity(), ControlFragment.OnControlListener,
-        ConnectFragment.OnConnectListener {
+    ConnectFragment.OnConnectListener {
 
     private var mNavController: NavController? = null
 
@@ -62,70 +61,59 @@ class MainActivity : AppCompatActivity(), ControlFragment.OnControlListener,
                             if (it.leftStickX == 0f && !isCentered) {
                                 isCentered = true
                                 turnCenter()
-                                Thread.sleep(10)
                             }
 
                             if (mGamepadMap!!.leftStickX > 0) {
                                 isCentered = false
                                 val speed = it.leftStickX.roundToInt()
                                 turnRight(speed)
-                                Thread.sleep(10)
                             }
 
                             if (it.leftStickX < 0) {
                                 isCentered = false
                                 val speed = it.leftStickX.roundToInt()
                                 turnLeft(abs(speed))
-                                Thread.sleep(10)
                             }
 
                             if (it.rightShoulderTrigger == 0f &&
-                                    it.leftShoulderTrigger == 0f && !isStopped
+                                it.leftShoulderTrigger == 0f && !isStopped
                             ) {
                                 isStopped = true
                                 moveStop()
-                                Thread.sleep(10)
                             }
 
                             if (it.rightShoulderTrigger > 0) {
                                 isStopped = false
                                 val speed = it.rightShoulderTrigger.roundToInt()
                                 moveForward(speed)
-                                Thread.sleep(10)
                             }
 
                             if (it.leftShoulderTrigger > 0) {
                                 isStopped = false
                                 val speed = it.leftShoulderTrigger.roundToInt()
                                 moveBackward(speed)
-                                Thread.sleep(10)
                             }
 
                             if (it.isButtonX) {
                                 rgbBlue()
-                                Thread.sleep(10)
                             }
 
                             if (it.isButtonA) {
                                 rgbGreen()
-                                Thread.sleep(10)
                             }
 
                             if (it.isButtonB) {
                                 rgbRed()
-                                Thread.sleep(10)
                             }
 
                             if (it.isButtonY && !isButtonYPressed) {
                                 isButtonYPressed = true
                                 buzzer()
-                                Thread.sleep(10)
                             }
 
                             if (!it.isButtonY && isButtonYPressed) {
                                 isButtonYPressed = false
                                 buzzer()
-                                Thread.sleep(10)
                             }
                         }
                     }
@@ -205,8 +193,8 @@ class MainActivity : AppCompatActivity(), ControlFragment.OnControlListener,
                 val bundle = Bundle()
                 bundle.putString("URL", "http://$mAddress:8090/?action=stream")
                 mNavController?.navigate(
-                        R.id.action_controlFragment_to_videoPlayerFragment,
-                        bundle
+                    R.id.action_controlFragment_to_videoPlayerFragment,
+                    bundle
                 )
             }
 
@@ -224,9 +212,9 @@ class MainActivity : AppCompatActivity(), ControlFragment.OnControlListener,
         if (address != null && address.isNotEmpty() && port > 0 && port < 65535) {
             when (sockType) {
                 ConnectFragment.SOCK_TCP -> mSocket =
-                        TCPSocket(address, port)
+                    TCPSocket(address, port)
                 ConnectFragment.SOCK_UDP -> mSocket =
-                        UDPSocket(address, port)
+                    UDPSocket(address, port)
             }
 
             mSocket?.onMySocketListener = object : MySocket.OnMySocketListener {

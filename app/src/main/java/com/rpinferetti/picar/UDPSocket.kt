@@ -33,10 +33,19 @@ class UDPSocket : MySocket, Parcelable {
     }
 
     override fun disconnect() {
-        mSocket?.close()
+        if (mSocket != null) {
+            Thread(Runnable {
+                try {
+                    mSocket?.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }).start()
+        }
     }
 
     override fun sendMessage(msg: String) {
+        Log.d("UDPSocket", msg)
         if (mSocket != null) {
             Thread(Runnable {
                 val buf = msg.toByteArray()
@@ -51,9 +60,9 @@ class UDPSocket : MySocket, Parcelable {
     }
 
     class ConnectTask internal constructor(
-            private val address: InetAddress,
-            private val port: Int,
-            private val listener: OnConnectTaskListener
+        private val address: InetAddress,
+        private val port: Int,
+        private val listener: OnConnectTaskListener
     ) : AsyncTask<Unit, Unit, Unit>() {
         private var socket: DatagramSocket? = null
 
