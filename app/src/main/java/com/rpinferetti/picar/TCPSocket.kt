@@ -1,6 +1,8 @@
 package com.rpinferetti.picar
 
 import android.os.AsyncTask
+import android.os.Parcel
+import android.os.Parcelable
 import android.util.Log
 
 import java.io.BufferedWriter
@@ -11,11 +13,13 @@ import java.net.InetAddress
 import java.net.Socket
 import java.nio.charset.StandardCharsets
 
-class TCPSocket(address: String?, port: Int) : MySocket(address, port) {
+class TCPSocket : MySocket, Parcelable {
 
     private var mAddress = InetAddress.getByName(address)
     private var mSocket: Socket? = null
     private var mBufferOut: Writer? = null
+
+    constructor(address: String, port: Int) : super(address, port)
 
     override fun connect() {
         if (mSocket != null)
@@ -61,10 +65,12 @@ class TCPSocket(address: String?, port: Int) : MySocket(address, port) {
     }
 
 
+    // CONNECT ASYNCTASK
+
     class ConnectTask internal constructor(
-        private val address: InetAddress,
-        private val port: Int,
-        private val listener: OnConnectTaskListener
+            private val address: InetAddress,
+            private val port: Int,
+            private val listener: OnConnectTaskListener
     ) : AsyncTask<Unit, Unit, Unit>() {
         private var socket: Socket? = null
         private var bufferOut: Writer? = null
@@ -73,10 +79,10 @@ class TCPSocket(address: String?, port: Int) : MySocket(address, port) {
             try {
                 socket = Socket(address, port)
                 bufferOut = BufferedWriter(
-                    OutputStreamWriter(
-                        socket!!.getOutputStream(),
-                        StandardCharsets.UTF_8
-                    )
+                        OutputStreamWriter(
+                                socket!!.getOutputStream(),
+                                StandardCharsets.UTF_8
+                        )
                 )
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -100,7 +106,26 @@ class TCPSocket(address: String?, port: Int) : MySocket(address, port) {
         }
     }
 
-    companion object {
-        private const val TAG = "TCPSocket"
+    // PARCELABLE IMPLEMENTATION
+
+    constructor(parcel: Parcel) : super(parcel)
+
+    override fun writeToParcel(dest: Parcel?, flags: Int) {
+        super.writeToParcel(dest, flags)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+
+    companion object CREATOR : Parcelable.Creator<TCPSocket> {
+        override fun createFromParcel(parcel: Parcel): TCPSocket {
+            return TCPSocket(parcel)
+        }
+
+        override fun newArray(size: Int): Array<TCPSocket?> {
+            return arrayOfNulls(size)
+        }
     }
 }
