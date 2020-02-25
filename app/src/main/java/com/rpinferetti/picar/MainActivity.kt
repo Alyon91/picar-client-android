@@ -191,7 +191,7 @@ class MainActivity : AppCompatActivity(), ControlFragment.OnControlListener,
 
             ControlFragment.OnControlListener.CAMERA -> {
                 val bundle = Bundle()
-                bundle.putString("URL", "http://$mAddress:8090/?action=stream")
+                bundle.putString("URL", VIDEO_URL)
                 mNavController?.navigate(
                     R.id.action_controlFragment_to_videoPlayerFragment,
                     bundle
@@ -264,6 +264,7 @@ class MainActivity : AppCompatActivity(), ControlFragment.OnControlListener,
     companion object {
         private const val TAG = "MainActivity"
 
+        private const val VIDEO_URL = "rtsp://192.168.1.108:8554/unicast"
         private const val MOVE_SPEED = 100
         private const val TURN_SPEED = 100
     }

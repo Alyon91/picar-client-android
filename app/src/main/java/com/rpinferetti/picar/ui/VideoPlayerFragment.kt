@@ -2,7 +2,6 @@ package com.rpinferetti.picar.ui
 
 import android.content.Context
 import android.content.pm.ActivityInfo
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -40,10 +39,8 @@ class VideoPlayerFragment : Fragment() {
 
         videoView?.apply {
             setVideoURI(Uri.parse(url))
-            setOnPreparedListener {
-                MediaPlayer.OnPreparedListener { this.start() }
-            }
             requestFocus()
+            start()
         }
 
         return root
