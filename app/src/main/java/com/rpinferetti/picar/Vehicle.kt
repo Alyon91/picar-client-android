@@ -1,48 +1,87 @@
 package com.rpinferetti.picar
 
-class Vehicle(var mSocket: MySocket) {
+import android.os.Parcel
+import android.os.Parcelable
+import android.util.Log
+
+class Vehicle() : Parcelable {
+    private var socket: MySocket? = null
+
+    constructor(parcel: Parcel) : this()
+
+    fun setSocket(socket: MySocket) {
+        this.socket = socket
+    }
 
     fun moveForward(speed: Int) {
-        mSocket.sendMessage(MOVE_FORWARD + speed)
+        Log.i(TAG, "moveForward - $speed")
+        socket?.sendMessage(CREATOR.MOVE_FORWARD + speed)
     }
 
     fun moveBackward(speed: Int) {
-        mSocket.sendMessage(MOVE_BACKWARD + speed)
+        Log.i(TAG, "moveBackward - $speed")
+        socket?.sendMessage(MOVE_BACKWARD + speed)
     }
 
     fun moveStop() {
-        mSocket.sendMessage(STOP)
+        Log.i(TAG, "moveStop")
+        socket?.sendMessage(STOP)
     }
 
     fun turnRight(speed: Int) {
-        mSocket.sendMessage(TURN_RIGHT + speed)
+        Log.i(TAG, "turnRight - $speed")
+        socket?.sendMessage(TURN_RIGHT + speed)
     }
 
     fun turnLeft(speed: Int) {
-        mSocket.sendMessage(TURN_LEFT + speed)
+        Log.i(TAG, "turnLeft - $speed")
+        socket?.sendMessage(TURN_LEFT + speed)
     }
 
     fun turnCenter() {
-        mSocket.sendMessage(TURN_CENTER)
+        Log.i(TAG, "turnCenter")
+        socket?.sendMessage(TURN_CENTER)
     }
 
     fun rgbBlue() {
-        mSocket.sendMessage(RGB_BLUE)
+        Log.i(TAG, "rgbBlue")
+        socket?.sendMessage(RGB_BLUE)
     }
 
     fun rgbGreen() {
-        mSocket.sendMessage(RGB_GREEN)
+        Log.i(TAG, "rgbGreen")
+        socket?.sendMessage(RGB_GREEN)
     }
 
     fun rgbRed() {
-        mSocket.sendMessage(RGB_RED)
+        Log.i(TAG, "rgbRed")
+        socket?.sendMessage(RGB_RED)
     }
 
     fun buzzer() {
-        mSocket.sendMessage(BUZZER_ALARM)
+        Log.i(TAG, "buzzer")
+        socket?.sendMessage(BUZZER_ALARM)
     }
 
-    companion object {
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeParcelable(socket, flags)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<Vehicle> {
+        override fun createFromParcel(parcel: Parcel): Vehicle {
+            return Vehicle(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Vehicle?> {
+            return arrayOfNulls(size)
+        }
+
+        const val TAG = "Vehicle"
+
         const val MOVE_FORWARD = ">Move Forward"
         const val MOVE_BACKWARD = ">Move Backward"
         const val TURN_LEFT = ">Turn Left"
