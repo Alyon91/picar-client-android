@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.rpinferetti.gamepad.Gamepad
+import com.ralyon.gamepad.Gamepad
 
 import com.rpinferetti.picar.ui.ConnectFragment
 

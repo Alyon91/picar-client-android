@@ -1,7 +1,7 @@
 package com.rpinferetti.picar
 
-import com.rpinferetti.gamepad.Gamepad
-import com.rpinferetti.gamepad.GamepadButton
+import com.ralyon.gamepad.Gamepad
+import com.ralyon.gamepad.GamepadButton
 import kotlin.math.abs
 import kotlin.math.roundToInt
 

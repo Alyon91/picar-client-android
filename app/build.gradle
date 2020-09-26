@@ -34,7 +34,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     // Gamepad
-    implementation project(':gamepad')
+    implementation 'com.github.ralyon:gamepad:1.0.0'
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.13'
